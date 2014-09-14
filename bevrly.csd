@@ -28,7 +28,7 @@ gi04on 		= 1     *gievenon		/* i4 sco is  */
 gi05on 		= 1     *gioddon		/* i5 sco is  */
 
 giamp   = 0.01 			; base volume control
-gi01amp = giamp 
+gi01amp = giamp + 0.1
 gi02amp = giamp
 gi03amp = giamp
 gi04amp = giamp
@@ -54,12 +54,34 @@ instr tootfour
 	
 	k1 linen iscale, iatt, p3, irel  ; p4=amp
 	
-	a3 oscil k1, inote*.996, 1   ; p5=freq
-	a2 oscil k1, inote*1.004, 1  ; p6=attack time
-	a1 oscil k1, inote, 1        ; p7=release time
+	a3 oscil k1, inote*.996, 1   
+	a2 oscil k1, inote*1.004, 1  
+	a1 oscil k1, inote, 1        
 	
 	a1 = a1+a2+a3
-	outs a1, a1
+	;outs a1, a1
+
+endin
+
+instr tootjr
+	iamp = p5/127       
+	iscale = iamp * .2       ; scale the amp at initialization
+	inote = p4         ; convert octave.pitch to cps
+	iatt = 0.05
+	irel = 0.1
+	
+	k1 linen iscale, iatt, p3, irel  ; p4=amp
+	
+	a6 oscil k1, inote*0.75, 1   
+	a5 oscil k1, inote*0.8, 1  
+	a4 oscil k1, inote*0.9, 1 
+	a3 oscil k1, inote*0.996, 1   
+	a2 oscil k1, inote*1.004, 1  
+	a1 oscil k1, inote, 1  
+	apulse mpulse k1, 0.001      
+	
+	aout = (a1+a2+a3+a4+a5+a6)*apulse
+	outs aout, aout
 
 endin
 
@@ -97,9 +119,9 @@ endin
 instr 1 
 	ipitch = p4
 	ivel = p5
-	aSubOutL, aSubOutR subinstr "tootfour", ivel, ipitch
+	aSubOutL, aSubOutR subinstr "tootjr", ivel, ipitch
 	if (gi01on==1) then  
-		AssignSend		        p1, 0.25, 0.1, gi01amp
+		AssignSend		        p1, 0.025, 0.5, gi01amp
 		SendOut			        p1, aSubOutL, aSubOutR
 	endif
 endin ; end ins 1
@@ -115,7 +137,7 @@ endin ; end ins 2
 instr 3 
 	ipitch = p4
 	ivel = p5
-	aSubOutL, aSubOutR subinstr "tootfour", ivel, ipitch
+	aSubOutL, aSubOutR subinstr "tootjr", ivel, ipitch
 	if (gi03on==1) then  
 		AssignSend		        p1, 0.25, 0.1, gi03amp
 		SendOut			        p1, aSubOutL, aSubOutR
