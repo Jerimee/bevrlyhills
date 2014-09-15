@@ -45,6 +45,27 @@ instr sweepy
 	#include "instruments/sweepy.inc"
 endin
 
+instr borrowedphazor ; 
+ iamp 	= p5/127
+ inote 	= p5
+ ipsix 	= 0.001
+ ipsev 	= 0.005
+ k1 linen iamp,ipsix,p3,ipsev
+ a9 phasor inote, 			p5
+ a8 phasor inote, 			p5*.7
+ a7 phasor inote, 			p5*.98
+ a6 phasor inote*0.99, 	0
+ a5 phasor inote*0.98, 	0
+ a4 phasor inote*0.97, 	0
+ a3 phasor inote*0.96, 	0
+ a2 phasor inote*0.95, 	0
+ a1 phasor inote*0.9, 	0
+ a11 = a1 * a2 * a3 * a4 * a5 * a6 + (a7 * a8 * a9)*.9
+ ;a10 butterhp a11, 10
+ out a11*k1, a11*k1
+endin     
+                        
+
 instr tootfour
 	iamp = p5/127       
 	iscale = iamp * .2       ; scale the amp at initialization
@@ -119,7 +140,7 @@ endin
 instr 1 
 	ipitch = p4
 	ivel = p5
-	aSubOutL, aSubOutR subinstr "tootjr", ivel, ipitch
+	aSubOutL, aSubOutR subinstr "borrowedphazor", ivel, ipitch
 	if (gi01on==1) then  
 		AssignSend		        p1, 0.025, 0.5, gi01amp
 		SendOut			        p1, aSubOutL, aSubOutR
@@ -128,7 +149,7 @@ endin ; end ins 1
 instr 2 
 	ipitch = p4
 	ivel = p5
-	aSubOutL, aSubOutR subinstr "resonz", ivel, ipitch
+	aSubOutL, aSubOutR subinstr "borrowedphazor", ivel, ipitch
 	if (gi02on==1) then  
 		AssignSend		        p1, 0.25, 0.1, gi02amp
 		SendOut			        p1, aSubOutL, aSubOutR
@@ -146,7 +167,7 @@ endin ; end ins 3
 instr 4
 	ipitch = p4
 	ivel = p5
-	aSubOutL, aSubOutR subinstr "sweepy", ivel, ipitch
+	aSubOutL, aSubOutR subinstr "borrowedphazor", ivel, ipitch
 	if (gi04on==1) then  
 		AssignSend		        p1, 0.25, 0.2, gi04amp
 		SendOut			        p1, aSubOutL, aSubOutR
@@ -155,7 +176,7 @@ endin ; end ins 4
 instr 5
 	ipitch = p4
 	ivel = p5
-	aSubOutL, aSubOutR subinstr "tootfour", ivel, ipitch
+	aSubOutL, aSubOutR subinstr "borrowedphazor", ivel, ipitch
 	if (gi05on==1) then  
 		AssignSend		        p1, 0.25, 0.2, gi05amp
 		SendOut			        p1, aSubOutL, aSubOutR
