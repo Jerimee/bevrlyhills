@@ -44,16 +44,20 @@ gi05amp = giamp
 instr sweepy 
 	#include "instruments/sweepy.inc"
 endin
+instr swave 
+	#include "instruments/swave.inc"
+endin
 
 instr borrowedphazor ; 
- iamp 	= p5/127
- inote 	= p5
- ipsix 	= 0.001
- ipsev 	= 0.005
- k1 linen iamp,ipsix,p3,ipsev
- a9 phasor inote, 			p5
- a8 phasor inote, 			p5*.7
- a7 phasor inote, 			p5*.98
+ iamp 		= 100/127
+ iendamp 	= 100/(127*3)
+ inote 		= p4
+ ipsix 		= 0.001
+ ipsev 		= 0.005
+ k1 linen iamp,ipsix,iendamp,ipsev
+ a9 phasor inote, 			p4
+ a8 phasor inote, 			p4*.7
+ a7 phasor inote, 			p4*.98
  a6 phasor inote*0.99, 	0
  a5 phasor inote*0.98, 	0
  a4 phasor inote*0.97, 	0
@@ -67,7 +71,7 @@ endin
                         
 
 instr tootfour
-	iamp = p5/127       
+	iamp = 100/127       
 	iscale = iamp * .2       ; scale the amp at initialization
 	inote = p4         ; convert octave.pitch to cps
 	iatt = 0.05
@@ -85,7 +89,7 @@ instr tootfour
 endin
 
 instr tootjr
-	iamp = p5/127       
+	iamp = 100/127       
 	iscale = iamp * .2       ; scale the amp at initialization
 	inote = p4         ; convert octave.pitch to cps
 	iatt = 0.05
@@ -139,8 +143,7 @@ endin
 
 instr 1 
 	ipitch = p4
-	ivel = p5
-	aSubOutL, aSubOutR subinstr "borrowedphazor", ivel, ipitch
+	aSubOutL, aSubOutR subinstr "swave", ipitch
 	if (gi01on==1) then  
 		AssignSend		        p1, 0.025, 0.5, gi01amp
 		SendOut			        p1, aSubOutL, aSubOutR
@@ -148,8 +151,7 @@ instr 1
 endin ; end ins 1
 instr 2 
 	ipitch = p4
-	ivel = p5
-	aSubOutL, aSubOutR subinstr "borrowedphazor", ivel, ipitch
+	aSubOutL, aSubOutR subinstr "swave", ipitch
 	if (gi02on==1) then  
 		AssignSend		        p1, 0.25, 0.1, gi02amp
 		SendOut			        p1, aSubOutL, aSubOutR
@@ -157,8 +159,7 @@ instr 2
 endin ; end ins 2
 instr 3 
 	ipitch = p4
-	ivel = p5
-	aSubOutL, aSubOutR subinstr "tootjr", ivel, ipitch
+	aSubOutL, aSubOutR subinstr "tootjr", ipitch
 	if (gi03on==1) then  
 		AssignSend		        p1, 0.25, 0.1, gi03amp
 		SendOut			        p1, aSubOutL, aSubOutR
@@ -166,8 +167,7 @@ instr 3
 endin ; end ins 3
 instr 4
 	ipitch = p4
-	ivel = p5
-	aSubOutL, aSubOutR subinstr "borrowedphazor", ivel, ipitch
+	aSubOutL, aSubOutR subinstr "swave", ipitch
 	if (gi04on==1) then  
 		AssignSend		        p1, 0.25, 0.2, gi04amp
 		SendOut			        p1, aSubOutL, aSubOutR
@@ -175,8 +175,7 @@ instr 4
 endin ; end ins 4
 instr 5
 	ipitch = p4
-	ivel = p5
-	aSubOutL, aSubOutR subinstr "borrowedphazor", ivel, ipitch
+	aSubOutL, aSubOutR subinstr "swave", ipitch
 	if (gi05on==1) then  
 		AssignSend		        p1, 0.25, 0.2, gi05amp
 		SendOut			        p1, aSubOutL, aSubOutR
