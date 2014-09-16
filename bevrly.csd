@@ -142,15 +142,18 @@ instr resonz
 endin
 
 instr 1 
-	ipitch = p4
-	aSubOutL, aSubOutR subinstr "swave", ipitch
+   	idur	= p3
+	ipitch 	= p4
+	ivel 	= p5
+	#include "instruments/swave-without-outs.inc"
 	if (gi01on==1) then  
 		AssignSend		        p1, 0.025, 0.5, gi01amp
-		SendOut			        p1, aSubOutL, aSubOutR
+		SendOut			        p1, aout, aout
 	endif
 endin ; end ins 1
 instr 2 
 	ipitch = p4
+	ivel 	= p5
 	aSubOutL, aSubOutR subinstr "swave", ipitch
 	if (gi02on==1) then  
 		AssignSend		        p1, 0.25, 0.1, gi02amp
@@ -159,6 +162,7 @@ instr 2
 endin ; end ins 2
 instr 3 
 	ipitch = p4
+	ivel 	= p5
 	aSubOutL, aSubOutR subinstr "tootjr", ipitch
 	if (gi03on==1) then  
 		AssignSend		        p1, 0.25, 0.1, gi03amp
@@ -167,7 +171,8 @@ instr 3
 endin ; end ins 3
 instr 4
 	ipitch = p4
-	aSubOutL, aSubOutR subinstr "swave", ipitch
+	ivel 	= p5
+	aSubOutL, aSubOutR subinstr "tootjr", ipitch
 	if (gi04on==1) then  
 		AssignSend		        p1, 0.25, 0.2, gi04amp
 		SendOut			        p1, aSubOutL, aSubOutR
@@ -175,7 +180,8 @@ instr 4
 endin ; end ins 4
 instr 5
 	ipitch = p4
-	aSubOutL, aSubOutR subinstr "swave", ipitch
+	ivel 	= p5
+	aSubOutL, aSubOutR subinstr "tootjr", ipitch
 	if (gi05on==1) then  
 		AssignSend		        p1, 0.25, 0.2, gi05amp
 		SendOut			        p1, aSubOutL, aSubOutR
