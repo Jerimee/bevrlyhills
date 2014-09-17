@@ -1,0 +1,40 @@
+/* SimpleLayout.ins */
+/* Stolen from https://github.com/edclements/csound-instruments/tree/master/osc */
+
+gihandle OSCinit 8000
+
+alwayson "fader1"
+alwayson "fader2"
+
+instr fader1
+  kf1 init 0
+  kk init 0
+  nxtmsg:
+    kk OSClisten gihandle, "/1/fader1", "f", kf1
+  if (kk == 0) goto ex
+    outletk "out", kf1
+    kgoto nxtmsg
+  ex:
+endin
+
+instr fader2
+  kf2 init 0
+  kk init 0
+  nxtmsg:
+    kk OSClisten gihandle, "/1/fader2", "f", kf2
+  if (kk == 0) goto ex
+    outletk "out", kf2
+    kgoto nxtmsg
+  ex:
+endin
+
+instr fader3
+  kf3 init 0
+  kk init 0
+  nxtmsg:
+    kk OSClisten gihandle, "/1/fader3", "f", kf3
+  if (kk == 0) goto ex
+    printk 0, kf3
+    kgoto nxtmsg
+  ex:
+endin

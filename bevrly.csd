@@ -25,7 +25,7 @@ gi01on 		= 1     *gioddon 		/* i1 sco is  */
 gi02on 		= 1     *gievenon 		/* i2 sco is  */
 gi03on 		= 1     *gioddon 		/* i3 sco is  */
 gi04on 		= 1     *gievenon		/* i4 sco is  */
-gi05on 		= 1     *gioddon		/* i5 sco is  */
+gi05on 		= 1     *gioddon		   /* i5 sco is  */
 
 giamp   = 0.01 			; base volume control
 gi01amp = giamp + 0.1
@@ -40,6 +40,35 @@ gi05amp = giamp
 
 ; Include the mixer instruments
 #include "instruments/busseffects.inc"
+
+
+connect "fader1", "out", "Bell", "in1"
+connect "fader2", "out", "Bell", "in2"
+
+#include "instruments/SimpleLayout.ins"
+
+instr 21, Bell
+kc1 init 100
+kc2 init 5
+kin1 inletk "in1"
+kin2 inletk "in2"
+kc1 = kin1*1000
+kc2 = kin2*10
+kvdepth = 0.005
+kvrate = 6
+ifn1 = 1
+ifn2 = 1
+ifn3 = 1
+ifn4 = 1
+ivfn = 1
+; midinoteonpch p4, p5
+kpch = p4
+kamp = 0.8*p5/127
+kfreq = kpch ; cpspch(kpch)
+asig fmbell kamp, kfreq, kc1, kc2, kvdepth, kvrate, ifn1, ifn2, ifn3, ifn4, ivfn
+aenv madsr 0.5, 0, 1, 0.5
+out asig*aenv
+endin
 
 instr sweepy 
 	#include "instruments/sweepy.inc"
@@ -164,10 +193,10 @@ instr 3
 	idur	= p3
 	ipitch = p4
 	ivel 	= p5
-	#include "instruments/swave-without-outs.inc"
+	aSubOutL, aSubOutR subinstr "Bell", ipitch, ivel
 	if (gi03on==1) then  
 		AssignSend		        p1, 0.25, 0.1, gi03amp
-		SendOut			        p1, aout, aout
+		SendOut			        p1, aSubOutL, aSubOutR
 	endif
 endin ; end ins 3
 instr 4
