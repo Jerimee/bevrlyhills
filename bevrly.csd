@@ -161,12 +161,13 @@ instr 2
 	endif
 endin ; end ins 2
 instr 3 
+	idur	= p3
 	ipitch = p4
 	ivel 	= p5
-	aSubOutL, aSubOutR subinstr "tootjr", ipitch
+	#include "instruments/swave-without-outs.inc"
 	if (gi03on==1) then  
 		AssignSend		        p1, 0.25, 0.1, gi03amp
-		SendOut			        p1, aSubOutL, aSubOutR
+		SendOut			        p1, aout, aout
 	endif
 endin ; end ins 3
 instr 4
