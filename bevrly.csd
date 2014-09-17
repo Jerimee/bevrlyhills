@@ -21,11 +21,11 @@ nchnls = 2
 gievenon	= 1
 gioddon  	= 1
 
-gi01on 		= 1     *gioddon 		/* i1 sco is  */
+gi01on 		= 0     *gioddon 		/* i1 sco is  */
 gi02on 		= 1     *gievenon 		/* i2 sco is  */
-gi03on 		= 1     *gioddon 		/* i3 sco is  */
-gi04on 		= 1     *gievenon		/* i4 sco is  */
-gi05on 		= 1     *gioddon		   /* i5 sco is  */
+gi03on 		= 0     *gioddon 		/* i3 sco is  */
+gi04on 		= 0     *gievenon		/* i4 sco is  */
+gi05on 		= 0     *gioddon		   /* i5 sco is  */
 
 giamp   = 0.01 			; base volume control
 gi01amp = giamp + 0.1
@@ -67,7 +67,48 @@ kamp = 0.8*p5/127
 kfreq = kpch ; cpspch(kpch)
 asig fmbell kamp, kfreq, kc1, kc2, kvdepth, kvrate, ifn1, ifn2, ifn3, ifn4, ivfn
 aenv madsr 0.5, 0, 1, 0.5
-out asig*aenv
+outs asig*aenv,asig*aenv
+endin
+
+
+; time-varying mixture of first six harmonics
+instr 22, cheby
+	; According to the GEN13 manual entry,
+	; the pattern + - - + + - - for the signs of 
+	; the chebyshev coefficients has nice properties.
+
+  ;midinoteonpch p4, p5
+  kpch = p4
+  kamp = 0.1*p5/127
+  kfreq = kpch
+	
+  itable chnget "table_sine"
+  if (itable == 0) then
+    ;itable ftgen 0, 0, 32768, 10, 1 ; sine wave
+    itable	ftgen 0,0, 65537, 10, 1 ; sine wave
+    chnset itable, "table_sine"
+  endif
+
+	; these six lines control the relative powers of the harmonics
+	k1 line 1.0, p3, 0.0
+	k2 line -0.5, p3, 0.0
+	k3 line -0.333, p3, -1.0
+	k4 line 0.0, p3, 0.5
+	k5 line 0.0, p3, 0.7
+	k6 line 0.0, p3, -1.0
+  k1 jitter k1, kfreq/2, kfreq
+  k2 jitter k2, kfreq/3, kfreq/2
+  k3 jitter k3, kfreq/4, kfreq/3
+  k4 jitter k4, kfreq/6, kfreq/5
+  k5 jitter k5, kfreq/7, kfreq/6
+  k6 jitter k6, kfreq/8, kfreq/7
+
+	ax oscili 1, kfreq, itable
+
+	ay chebyshevpoly ax, 0, k1, k2, k3, k4, k5, k6
+	
+  adeclick madsr 0.5, 0.3, 1, 5
+	outs ay * adeclick * kamp, ay * adeclick * kamp
 endin
 
 instr sweepy 
@@ -183,7 +224,7 @@ endin ; end ins 1
 instr 2 
 	ipitch = p4
 	ivel 	= p5
-	aSubOutL, aSubOutR subinstr "swave", ipitch
+	aSubOutL, aSubOutR subinstr "Bell", ipitch, ivel
 	if (gi02on==1) then  
 		AssignSend		        p1, 0.25, 0.1, gi02amp
 		SendOut			        p1, aSubOutL, aSubOutR
@@ -202,7 +243,7 @@ endin ; end ins 3
 instr 4
 	ipitch = p4
 	ivel 	= p5
-	aSubOutL, aSubOutR subinstr "tootjr", ipitch
+	aSubOutL, aSubOutR subinstr "cheby", ipitch, ivel
 	if (gi04on==1) then  
 		AssignSend		        p1, 0.25, 0.2, gi04amp
 		SendOut			        p1, aSubOutL, aSubOutR
